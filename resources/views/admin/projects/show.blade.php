@@ -12,6 +12,13 @@
         </p>
         @endif --}}
         {{-- @dump($post->category()) --}}
+
+        <ul class="d-flex gap-2 ps-0">
+          @foreach ($project->technologies as $technology)
+            <li class="badge rounded-pill text-bg-primary">{{ $technology->name }}</li>
+          @endforeach 
+        </ul>
+
         <p>{{ $project->slug }}</p>
         <p>{{ $project->created_at->format('d/m/Y') }}</p>
       </div>
