@@ -50,11 +50,17 @@ class ProjectController extends Controller
             'title' => 'required|max:255|string|unique:projects',
             'description' => 'nullable|min:5|string',
             // 'category_id' => 'nullable|exists:categories,id'
+            'technologies'=> 'exists:technologies,id',
         ]);
         $data = $request->all();
         $data['slug'] = Str::slug($data['title'], '-');
 
         $project = Project::create($data);
+
+        if($request->has('technologies')) {
+            $project->technologies()->attach($data['technologies']);
+        }
+        dd($data);
 
         return redirect()->route('admin.projects.show', $project);
     }
