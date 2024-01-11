@@ -78,7 +78,8 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $technologies = Technology::orderBy('name','ASC')->get();
+        return view('admin.projects.edit', compact('project','technologies'));
     }
 
     /**
@@ -89,7 +90,8 @@ class ProjectController extends Controller
         $request->validate([
             'title' => ['required', 'max:255', 'string', Rule::unique('projects')->ignore($project->id)],
             'description' => 'nullable|min:5|string',
-            // 'category_id' => 'nullable|exists:categories,id'
+            // 'category_id' => 'nullable|exists:categories,id',
+            'technologies'=> 'exists:technologies,id',
         ]);
         $data = $request->all();
 
@@ -98,6 +100,14 @@ class ProjectController extends Controller
         // }
 
         $project->update($data);
+
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($data['technologies']);
+        } else {
+            // $project->technologies()->sync([]);
+            $project->technologies()->detach();
+        }
+        // dd($data);
 
         return redirect()->route('admin.projects.show', $project);
     }
